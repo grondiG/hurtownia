@@ -1,17 +1,25 @@
 import { AiOutlineShoppingCart, AiOutlineClose } from 'react-icons/ai'
 import React, { useEffect, useRef, useState } from 'react';
 
+let cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
+let cartValue = sessionStorage.getItem("cartVal") || 0;
+
+
 const Cart = () => {
     const cartVal = useRef();
     const [isShown, setIsShown] = useState(false);
-    const [cartData, setCartData] = useState(sessionStorage.getItem("cardData") || []);
-    const [cartValue, setCartValue] = useState(sessionStorage.getItem("cardVal") || 0);
+    // const [cartData, setCartData] = useState();
+    // const [cartValue, setCartValue] = useState(sessionStorage.getItem("cardVal") || 0);
     useEffect(() => {
         cartVal.current.setAttribute('data-value', cartValue);
-    }, [])
+        cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
+        cartValue = sessionStorage.getItem("cartVal") || 0;
+    })
 
     const handleDelete = (name) => {
-        setCartData(cartData.filter((item) => item.name !== name));
+        // cartData = cartData.filter((item) => item.name !== name);
+        sessionStorage.setItem("cartData", JSON.stringify(cartData.filter((item) => item.name !== name)));
+        sessionStorage.setItem("cartVal", cartData.length - 1);
     }
 
     return <>
@@ -34,7 +42,7 @@ const Cart = () => {
                             <p>{amount}kg</p>
                             <p>{price}zl</p>
                         </div>
-                        <div className="close" onClick={() => handleDelete(name)}>
+                        <div className="close" onClick={() => { handleDelete(name); }}>
                             <AiOutlineClose />
                         </div>
                     </div>

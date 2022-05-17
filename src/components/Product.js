@@ -60,9 +60,10 @@ const General = () => {
             tempArr = [...cartData, tempData];
             setCartData([...cartData, tempData]);
         }
-        sessionStorage.setItem("cartData", cartData);
+        sessionStorage.setItem("cartData", JSON.stringify(cartData));
         sessionStorage.setItem("cartVal", cartVal);
         setCartVal(tempArr.length);
+
     }
 
     return <>
