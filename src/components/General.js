@@ -1,5 +1,5 @@
-import { useLocation, useNavigate, Redirect } from 'react-router-dom';
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getFirestore, collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineLoading } from 'react-icons/ai'
 import Cart from './Cart';
@@ -15,6 +15,8 @@ const General = () => {
     const [data, setData] = useState([]);
     const [value, setValue] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
+    const [cartVal, setCartVal] = useState(0);
+    const [cartData, setCartData] = useState([]);
     const navigate = useNavigate();
     const getData = async () => {
         console.log(typeof location.state.login);
@@ -25,7 +27,9 @@ const General = () => {
             setPermissions(doc.data().permissions)
         })
         let tempData = [];
-        const queryProducts = await getDocs(collection(db, "products"));
+        const productsRef = collection(db, "products");
+        const q2 = query(productsRef, orderBy('date'));
+        const queryProducts = await getDocs(q2);
         queryProducts.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             tempData.push(doc.data());
@@ -83,8 +87,8 @@ const General = () => {
             <div className="content-panel">
                 {!isLoaded && <AiOutlineLoading className="loading general" />}
                 {data.map((item, index) => {
-                    const { img_url, amount, name, description, price } = item;
-                    return <div className="product" onClick={() => navigate('/product', { state: { login: location.state.login, permissions: permissions, img_url: img_url, amount: amount, name: name, description: description, price: price, cartData: location.state.cartData || [], cartVal: location.state.cartVal || 0 } })}>
+                    const { img_url, amount, name, description, price, date } = item;
+                    return <div className="product" onClick={() => navigate('/product', { state: { login: location.state.login, permissions: permissions, img_url: img_url, amount: amount, name: name, description: description, price: price, date: date, cartData: location.state.cartData || [], cartVal: location.state.cartVal || 0 } })}>
                         <img src={img_url} alt={name} />
                         <p>{name} {price}zł/kg</p>
                         <input type="button" value="Zobacz więcej" />
@@ -92,7 +96,7 @@ const General = () => {
                 })}
             </div>
         </div>
-        <Cart />
+        <Cart setData={setCartData} data={cartData} />
     </>
 }
 

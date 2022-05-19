@@ -9,13 +9,29 @@ const Cart = ({ setData }) => {
     const [update, setUpdate] = useState(0);
     const [cartData, setCartData] = useState(JSON.parse(sessionStorage.getItem("cartData")) || [])
     const [fullPrice, setFullPrice] = useState(0);
+    const cartMenu = useRef();
+    const cartIcon = useRef();
     // const [cartData, setCartData] = useState();
     const [cartValue, setCartValue] = useState(sessionStorage.getItem("cartVal") || 0);
-    useEffect(() => {
-        cartVal.current.setAttribute('data-value', cartValue);
 
+    useEffect(() => {
+        cartVal.current.setAttribute('data-value', sessionStorage.getItem("cartVal") || 0);
 
     });
+
+    useEffect(() => {
+        document.body.addEventListener('click', handleClick);
+        return () => {
+            document.body.removeEventListener('click', handleClick);
+        }
+    }, [])
+
+    const handleClick = (e) => {
+        console.log(cartMenu.current.contains(e.target))
+        if (!cartMenu.current.contains(e.target) && e.target !== cartVal.current && e.target.parentNode !== cartVal.current) {
+            setIsShown(false);
+        }
+    };
 
     const handleDelete = (name) => {
         // cartData = cartData.filter((item) => item.name !== name);
@@ -27,6 +43,8 @@ const Cart = ({ setData }) => {
         })
         setUpdate(cartData.length - 1);
         setData(cartData.filter((item) => item.name !== name));
+        setCartData(cartData.filter((item) => item.name !== name));
+        setCartValue(cartData.length - 1)
         sessionStorage.setItem("cartData", JSON.stringify(cartData.filter((item) => item.name !== name)));
         sessionStorage.setItem("cartVal", cartData.length - 1);
 
@@ -45,9 +63,9 @@ const Cart = ({ setData }) => {
 
     return <>
         <div className='cart' ref={cartVal} onClick={handleAdd}  >
-            <AiOutlineShoppingCart />
+            <AiOutlineShoppingCart ref={cartIcon} />
         </div>
-        <div className={isShown ? 'cart-menu active' : 'cart-menu'}>
+        <div className={isShown ? 'cart-menu active' : 'cart-menu'} ref={cartMenu}>
             <div className='cart-info'>
                 <h2>Ilość produktów w koszyku: {cartValue}</h2>
             </div>
@@ -74,7 +92,7 @@ const Cart = ({ setData }) => {
             <div className='cart-confirm'>
                 <input type="submit" value="Zloz zamowienie" />
                 <p className='fullPrice'>{fullPrice}zl</p>
-            </div>/
+            </div>
         </div>
     </>
 }

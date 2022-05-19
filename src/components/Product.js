@@ -21,7 +21,8 @@ const General = () => {
             price: location.state.price,
             description: location.state.description,
             img_url: location.state.img_url,
-            amount: location.state.amount
+            amount: location.state.amount,
+            date: location.state.date
         })
         const citiesRef = collection(db, "users");
         const q = query(citiesRef, where("login", "==", location.state.login));
@@ -100,6 +101,7 @@ const General = () => {
                             <input type="number" placeholder='Ilość w kg' style={{ width: "30%" }} min="1" value={itemAmount} onChange={(e) => setItemAmount(e.target.value)} />
                             <input type='submit' value='Dodaj do koszyka' />
                         </form>
+                        <p style={{ color: "#827F7F", fontSize: '.9rem' }}>Data dodania: {data.date}</p>
                     </div>
                 </div>
             </div>
