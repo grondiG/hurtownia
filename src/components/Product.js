@@ -29,8 +29,8 @@ const General = () => {
         querySnapshot.forEach((doc) => {
             setPermissions(doc.data().permissions)
         })
-        setCartVal(location.state.cartVal || 0);
-        setCartData(location.state.cartData || []);
+        setCartVal(sessionStorage.getItem("cartVal") || 0);
+        setCartData(JSON.parse(sessionStorage.getItem("cartData")) || []);
     }
     useEffect(() => {
         getData();
@@ -41,6 +41,7 @@ const General = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         let tempArr = cartData;
+        console.log(tempArr);
         let isAdded = false;
         tempArr.forEach((item) => {
             if (item.name === location.state.name) {
@@ -60,8 +61,8 @@ const General = () => {
             tempArr = [...cartData, tempData];
             setCartData([...cartData, tempData]);
         }
-        sessionStorage.setItem("cartData", JSON.stringify(cartData));
-        sessionStorage.setItem("cartVal", cartVal);
+        sessionStorage.setItem("cartData", JSON.stringify(tempArr));
+        sessionStorage.setItem("cartVal", tempArr.length);
         setCartVal(tempArr.length);
 
     }
@@ -103,7 +104,7 @@ const General = () => {
                 </div>
             </div>
         </div>
-        <Cart />
+        <Cart setData={setCartData} data={cartData} />
     </>
 }
 

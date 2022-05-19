@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Redirect } from 'react-router-dom';
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineLoading } from 'react-icons/ai'
@@ -17,6 +17,7 @@ const General = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const navigate = useNavigate();
     const getData = async () => {
+        console.log(typeof location.state.login);
         const citiesRef = collection(db, "users");
         const q = query(citiesRef, where("login", "==", location.state.login));
         const querySnapshot = await getDocs(q);
@@ -44,10 +45,17 @@ const General = () => {
         }
     }
     useEffect(() => {
+        console.log(typeof location.state.login)
+
         getData();
+
     }, []);
 
     const location = useLocation();
+
+    if (typeof location.state.login === 'null') {
+        return <h1>naaah</h1>
+    }
 
     return <>
         <div className="header">
@@ -84,7 +92,7 @@ const General = () => {
                 })}
             </div>
         </div>
-        <Cart value={location.state.cartVal || 0} data={location.state.cartData || []} />
+        <Cart />
     </>
 }
 
