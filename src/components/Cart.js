@@ -1,9 +1,13 @@
 import { AiOutlineShoppingCart, AiOutlineClose } from 'react-icons/ai'
+import { collection, addDoc, getFirestore } from "firebase/firestore";
+import app from './initFirebase';
 import React, { useEffect, useRef, useState } from 'react';
 
+const db = getFirestore(app);
 
 
-const Cart = ({ setData }) => {
+
+const Cart = ({ setData, clientName }) => {
     const cartVal = useRef();
     const [isShown, setIsShown] = useState(false);
     const [update, setUpdate] = useState(0);
@@ -61,6 +65,22 @@ const Cart = ({ setData }) => {
         setFullPrice(count);
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await addDoc(collection(db, 'transactions'), {
+            clientName: clientName,
+            date: new Date().toISOString().slice(0, 10),
+            status: false,
+            items: cartData,
+            fullPrice: fullPrice
+        })
+        setCartData([]);
+        setCartValue(0);
+        setFullPrice(0);
+        sessionStorage.setItem("cartData", JSON.stringify([]));
+        sessionStorage.setItem("cartVal", 0);
+    }
+
     return <>
         <div className='cart' ref={cartVal} onClick={handleAdd}  >
             <AiOutlineShoppingCart ref={cartIcon} />
@@ -90,8 +110,10 @@ const Cart = ({ setData }) => {
                 })}
             </div>
             <div className='cart-confirm'>
-                <input type="submit" value="Zloz zamowienie" />
-                <p className='fullPrice'>{fullPrice}zl</p>
+                <form onSubmit={handleSubmit}>
+                    <input type="submit" value="Zloz zamowienie" />
+                    <p className='fullPrice'>{fullPrice}zl</p>
+                </form>
             </div>
         </div>
     </>

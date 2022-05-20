@@ -106,7 +106,7 @@ const General = () => {
                 </div>
             </div>
         </div>
-        <Cart setData={setCartData} data={cartData} />
+        <Cart setData={setCartData} data={cartData} clientName={location.state.login} />
     </>
 }
 

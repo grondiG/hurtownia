@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getDocs, getFirestore, collection } from "firebase/firestore";
 import app from './initFirebase';
 
 const db = getFirestore(app);
@@ -15,10 +15,26 @@ const UserPanel = () => {
     const [price, setPrice] = useState(1);
     const [imgUrl, setImgUrl] = useState('');
 
+    const [data, setData] = useState([]);
+
     const info = useRef();
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    const fetchData = async () => {
+        let tempArr = [];
+        const docRef = await getDocs(collection(db, "transactions"));
+        docRef.forEach((doc) => {
+            tempArr.push(doc.data());
+        })
+        console.log(tempArr);
+        setData(tempArr);
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [])
 
     const handleLogOut = () => {
         navigate('/');
@@ -95,6 +111,22 @@ const UserPanel = () => {
                     <input type="submit" value="Dodaj" />
                 </form>
             </div>}
+            {
+                location.state.permissions > 1 && <div className="user-panel">
+                    <h1>Propozycje transakcji: </h1>
+                    <div className="offers">
+                        {data.map((item, key) => {
+                            const { clientName, date, fullPrice, items, status } = item;
+                            return <div className='offerBtn'>
+                                <p>Nazwa klienta: {clientName}</p>
+                                <p>Cena ogólna: {fullPrice}zł</p>
+                                <p>Data: {date}</p>
+                                <p>Stan: {status ? '✅' : '❌'}</p>
+                            </div>
+                        })}
+                    </div>
+                </div>
+            }
         </div>
     </>
 }
