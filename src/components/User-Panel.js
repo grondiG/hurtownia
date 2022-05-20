@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { doc, setDoc, getDocs, getFirestore, collection } from "firebase/firestore";
+import UserModal from './UserModal';
 import app from './initFirebase';
 
 const db = getFirestore(app);
@@ -14,6 +15,8 @@ const UserPanel = () => {
     const [amount, setAmount] = useState(1);
     const [price, setPrice] = useState(1);
     const [imgUrl, setImgUrl] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [modalData, setModalData] = useState([]);
 
     const [data, setData] = useState([]);
 
@@ -70,6 +73,12 @@ const UserPanel = () => {
         }
     }
 
+    const handleModal = (e, items) => {
+        setModalData(items);
+        setShowModal(true);
+
+    }
+
     return <>
         <div className="header">
             <div className="logo">
@@ -117,7 +126,7 @@ const UserPanel = () => {
                     <div className="offers">
                         {data.map((item, key) => {
                             const { clientName, date, fullPrice, items, status } = item;
-                            return <div className='offerBtn'>
+                            return <div className='offerBtn' onClick={() => handleModal(items)}>
                                 <p>Nazwa klienta: {clientName}</p>
                                 <p>Cena ogólna: {fullPrice}zł</p>
                                 <p>Data: {date}</p>
@@ -125,6 +134,7 @@ const UserPanel = () => {
                             </div>
                         })}
                     </div>
+                    <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} />
                 </div>
             }
         </div>
