@@ -20,7 +20,6 @@ const Cart = ({ setData, clientName }) => {
 
     useEffect(() => {
         cartVal.current.setAttribute('data-value', sessionStorage.getItem("cartVal") || 0);
-
     });
 
     useEffect(() => {

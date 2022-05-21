@@ -19,6 +19,7 @@ const UserPanel = () => {
     const [modalData, setModalData] = useState([]);
 
     const [data, setData] = useState([]);
+    const [clientData, setClientData] = useState([]);
 
     const info = useRef();
 
@@ -73,10 +74,10 @@ const UserPanel = () => {
         }
     }
 
-    const handleModal = (e, items) => {
+    const handleModal = (items, clientName) => {
         setModalData(items);
+        setClientData(clientName);
         setShowModal(true);
-
     }
 
     return <>
@@ -126,7 +127,7 @@ const UserPanel = () => {
                     <div className="offers">
                         {data.map((item, key) => {
                             const { clientName, date, fullPrice, items, status } = item;
-                            return <div className='offerBtn' onClick={() => handleModal(items)}>
+                            return <div className='offerBtn' onClick={() => handleModal(items, clientName)}>
                                 <p>Nazwa klienta: {clientName}</p>
                                 <p>Cena ogólna: {fullPrice}zł</p>
                                 <p>Data: {date}</p>
@@ -134,7 +135,7 @@ const UserPanel = () => {
                             </div>
                         })}
                     </div>
-                    <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} />
+                    <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} clientData={clientData} />
                 </div>
             }
         </div>

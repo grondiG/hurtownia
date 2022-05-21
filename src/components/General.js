@@ -49,7 +49,6 @@ const General = () => {
         }
     }
     useEffect(() => {
-        console.log(typeof location.state.login)
 
         getData();
 

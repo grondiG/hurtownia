@@ -7,27 +7,7 @@ import bcrypt from 'bcryptjs'
 
 const db = getFirestore(app);
 
-const handleButton = async (e, pass, mail, login, setIsLoading, setIsErr, navigate) => {
-    e.preventDefault();
-    setIsLoading(true);
-    if (validatePassword(pass) && validateMail(mail) && await validateLogin(login)) {
-        setIsErr(false);
-        const hashedPassword = bcrypt.hashSync(pass, bcrypt.genSaltSync(10));
-        await setDoc(doc(db, "users", String(Date.now() + Math.random())), {
-            login: login,
-            mail: mail,
-            pass: hashedPassword,
-            permissions: 0
-        })
-        navigate('/general', { state: { login: login }, replace: true });
 
-        // console.log(bcrypt.compareSync(pass, hashedPassword));
-    }
-    else {
-        setIsErr(true);
-    }
-    setIsLoading(false);
-}
 
 const validatePassword = (pass) => {
     const RegPass = new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})");
@@ -67,10 +47,37 @@ const Register = () => {
     const [login, setLogin] = useState('');
     const [mail, setMail] = useState('');
     const [pass, setPass] = useState('');
+    const [phoneNr, setPhoneNr] = useState('');
+    const [adres, setAdres] = useState('');
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isErr, setIsErr] = useState(false);
     const navigate = useNavigate();
+
+    const handleButton = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        if (validatePassword(pass) && validateMail(mail) && await validateLogin(login) && phoneNr !== '' && adres !== '') {
+            setIsErr(false);
+            const hashedPassword = bcrypt.hashSync(pass, bcrypt.genSaltSync(10));
+            await setDoc(doc(db, "users", String(Date.now() + Math.random())), {
+                login: login,
+                mail: mail,
+                pass: hashedPassword,
+                phoneNr: phoneNr,
+                adres: adres,
+                permissions: 0
+            })
+            navigate('/general', { state: { login: login }, replace: true });
+
+            // console.log(bcrypt.compareSync(pass, hashedPassword));
+        }
+        else {
+            setIsErr(true);
+        }
+        setIsLoading(false);
+    }
+
     if (isLoading) {
         return <AiOutlineLoading className="loading" />;
     }
@@ -78,17 +85,21 @@ const Register = () => {
         <Link to="/"><AiOutlineArrowLeft className='back-icon' /></Link>
         <div className='panel'>
             <h1>Rejestracja</h1>
-            <form onSubmit={(e) => handleButton(e, pass, mail, login, setIsLoading, setIsErr, navigate)}>
+            <form onSubmit={handleButton}>
                 <p>Login </p>
                 <input type="text" value={login} onChange={(e) => setLogin(e.target.value)} />
                 <p>E-mail </p>
                 <input type="text" value={mail} onChange={(e) => setMail(e.target.value)} className={"btn" + (validateMail(mail) ? "" : " active")} />
+                <p>Adres zamieszkania</p>
+                <input type="text" value={adres} onChange={(e) => setAdres(e.target.value)} className="btn" />
+                <p>Numer telefonu</p>
+                <input type="text" value={phoneNr} onChange={(e) => setPhoneNr(e.target.value)} className="btn" />
                 <p>Haslo </p>
                 <input type="password"
                     value={pass} onChange={(e) => setPass(e.target.value)} className={"btn" + (validatePassword(pass) ? "" : " active")} />
                 <p onClick={() => setShow(!show)}>Co powinno zawierać hasło?</p>
                 {show ? <p>Hasło powinno mieć 8 znaków, conajmniej 1 dużą oraz małą literę a także znak specjalny</p> : <p></p>}
-                {isErr && <p style={{ color: "red" }}>Niepoprawne dane lub taki login już istnieje!</p>}
+                {isErr && <p style={{ color: "red" }}>Niepoprawne dane lub taki login już istnieje! (upewnij sie ze wszystkie pola sa wypelnione)</p>}
                 <input type="submit" value="Stwórz konto" />
             </form>
         </div>
