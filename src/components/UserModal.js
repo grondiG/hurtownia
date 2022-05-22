@@ -1,16 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { collection, query, where, getFirestore, getDocs } from "firebase/firestore";
-import app from "./initFirebase";
-
-const db = getFirestore(app);
+import React, { useEffect, useRef } from "react";
 
 const UserModal = ({ showModal, setShowModal, modalData, clientData }) => {
-    const [client, setClient] = useState([]);
     const modal = useRef(null);
     useEffect(() => {
-        getUser();
-
-        console.log(modal.current !== null)
         if (modal.current !== null) {
             document.body.addEventListener('click', handleClick);
             return () => {
@@ -18,16 +10,6 @@ const UserModal = ({ showModal, setShowModal, modalData, clientData }) => {
             }
         }
     }, [])
-
-    const getUser = async () => {
-        console.log(clientData);
-        const q = query(collection(db, "users"), where("login", "==", clientData));
-        const user = await getDocs(q);
-        user.forEach((item) => {
-            setClient(item.data());
-        })
-
-    }
 
 
     const handleClick = (e) => {
@@ -59,8 +41,8 @@ const UserModal = ({ showModal, setShowModal, modalData, clientData }) => {
 
                 </tbody>
             </table>
-            <p>Adres wysylki: {client.adres}</p>
-            <p>Numer kontaktowy: {client.phoneNr}</p>
+            <p>Adres wysylki: {clientData.adres}</p>
+            <p>Numer kontaktowy: {clientData.number}</p>
             <input type="button" className="btn" style={{
                 borderColor: 'green',
                 color: 'green',

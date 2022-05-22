@@ -47,8 +47,6 @@ const Register = () => {
     const [login, setLogin] = useState('');
     const [mail, setMail] = useState('');
     const [pass, setPass] = useState('');
-    const [phoneNr, setPhoneNr] = useState('');
-    const [adres, setAdres] = useState('');
     const [show, setShow] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isErr, setIsErr] = useState(false);
@@ -57,15 +55,15 @@ const Register = () => {
     const handleButton = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        if (validatePassword(pass) && validateMail(mail) && await validateLogin(login) && phoneNr !== '' && adres !== '') {
+        if (validatePassword(pass) && validateMail(mail) && await validateLogin(login)) {
             setIsErr(false);
             const hashedPassword = bcrypt.hashSync(pass, bcrypt.genSaltSync(10));
             await setDoc(doc(db, "users", String(Date.now() + Math.random())), {
                 login: login,
                 mail: mail,
                 pass: hashedPassword,
-                phoneNr: phoneNr,
-                adres: adres,
+                phoneNr: "",
+                adres: "",
                 permissions: 0
             })
             navigate('/general', { state: { login: login }, replace: true });
@@ -90,10 +88,6 @@ const Register = () => {
                 <input type="text" value={login} onChange={(e) => setLogin(e.target.value)} />
                 <p>E-mail </p>
                 <input type="text" value={mail} onChange={(e) => setMail(e.target.value)} className={"btn" + (validateMail(mail) ? "" : " active")} />
-                <p>Adres zamieszkania</p>
-                <input type="text" value={adres} onChange={(e) => setAdres(e.target.value)} className="btn" />
-                <p>Numer telefonu</p>
-                <input type="text" value={phoneNr} onChange={(e) => setPhoneNr(e.target.value)} className="btn" />
                 <p>Haslo </p>
                 <input type="password"
                     value={pass} onChange={(e) => setPass(e.target.value)} className={"btn" + (validatePassword(pass) ? "" : " active")} />

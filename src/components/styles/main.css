@@ -603,3 +603,6 @@ table img {
     width: 150px !important;
     height: 150px !important;
 }
+hr{
+    width: 100%;
+}

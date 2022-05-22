@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { doc, setDoc, getDocs, getFirestore, collection } from "firebase/firestore";
+import { doc, setDoc, getDocs, getFirestore, collection, query, where, updateDoc } from "firebase/firestore";
 import UserModal from './UserModal';
 import app from './initFirebase';
 
 const db = getFirestore(app);
 
 const UserPanel = () => {
+
     const [showMenu, setShowMenu] = useState(false);
 
     const [name, setName] = useState('');
@@ -17,14 +18,17 @@ const UserPanel = () => {
     const [imgUrl, setImgUrl] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [modalData, setModalData] = useState([]);
-
+    const [userAdres, setUserAdres] = useState('');
+    const [userNumber, setUserNumber] = useState('');
     const [data, setData] = useState([]);
     const [clientData, setClientData] = useState([]);
 
     const info = useRef();
+    const infoUpdate = useRef();
 
     const navigate = useNavigate();
     const location = useLocation();
+
 
     const fetchData = async () => {
         let tempArr = [];
@@ -74,10 +78,33 @@ const UserPanel = () => {
         }
     }
 
-    const handleModal = (items, clientName) => {
+    const handleModal = (items, adres, phoneNr) => {
         setModalData(items);
-        setClientData(clientName);
+        setClientData({ adres: adres, number: phoneNr });
         setShowModal(true);
+    }
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        if (userNumber !== "" && userAdres !== "") {
+            const usersRef = collection(db, "users");
+            const q = query(usersRef, where("login", "==", location.state.login))
+            const querySnapshot = await getDocs(q);
+            let id = "";
+            querySnapshot.forEach((item) => {
+                id = item.id;
+            })
+            await updateDoc(doc(db, "users", id), {
+                phoneNr: userNumber,
+                adres: userAdres
+            })
+            infoUpdate.current.innerHTML = "Pola nie moga byc puste!";
+            infoUpdate.current.style.color = "red";
+        }
+        else {
+            infoUpdate.current.innerHTML = "Poprawnie zaktualizowano!";
+            infoUpdate.current.style.color = "green";
+        }
     }
 
     return <>
@@ -102,6 +129,16 @@ const UserPanel = () => {
         <div className='user-body'>
             <div className="user-panel">
                 <h1>Witaj {location.state.login} w menu twojego konta!</h1>
+                <p>Ustaw swoje dane kontaktowe: </p>
+                <form onSubmit={handleUpdate}>
+                    <p>Adres: </p>
+                    <input type="text" value={userAdres} onChange={(e) => setUserAdres(e.target.value)} />
+                    <p>Nr tel: </p>
+                    <input type="text" maxLength={9} value={userNumber} onChange={(e) => setUserNumber(e.target.value)} />
+                    <p ref={infoUpdate}></p>
+                    <input type="submit" value="Ustaw!" />
+                </form>
+                <hr />
                 <input type="button" value="Wyloguj się!" onClick={handleLogOut} />
             </div>
             {location.state.permissions > 0 && <div className="user-panel">
@@ -126,8 +163,8 @@ const UserPanel = () => {
                     <h1>Propozycje transakcji: </h1>
                     <div className="offers">
                         {data.map((item, key) => {
-                            const { clientName, date, fullPrice, items, status } = item;
-                            return <div className='offerBtn' onClick={() => handleModal(items, clientName)}>
+                            const { clientName, date, fullPrice, items, status, adres, phoneNr } = item;
+                            return <div className='offerBtn' onClick={() => handleModal(items, adres, phoneNr)}>
                                 <p>Nazwa klienta: {clientName}</p>
                                 <p>Cena ogólna: {fullPrice}zł</p>
                                 <p>Data: {date}</p>
@@ -135,11 +172,13 @@ const UserPanel = () => {
                             </div>
                         })}
                     </div>
-                    <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} clientData={clientData} />
+
                 </div>
             }
+            <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} clientData={clientData} />
         </div>
     </>
 }
 
 export default UserPanel;
+

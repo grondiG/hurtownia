@@ -1,5 +1,5 @@
 import { AiOutlineShoppingCart, AiOutlineClose } from 'react-icons/ai'
-import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { collection, addDoc, getFirestore, query, where, getDocs } from "firebase/firestore";
 import app from './initFirebase';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -13,6 +13,9 @@ const Cart = ({ setData, clientName }) => {
     const [update, setUpdate] = useState(0);
     const [cartData, setCartData] = useState(JSON.parse(sessionStorage.getItem("cartData")) || [])
     const [fullPrice, setFullPrice] = useState(0);
+
+    const [showErr, setShowErr] = useState(false);
+
     const cartMenu = useRef();
     const cartIcon = useRef();
     // const [cartData, setCartData] = useState();
@@ -66,18 +69,33 @@ const Cart = ({ setData, clientName }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await addDoc(collection(db, 'transactions'), {
-            clientName: clientName,
-            date: new Date().toISOString().slice(0, 10),
-            status: false,
-            items: cartData,
-            fullPrice: fullPrice
+        const q = query(collection(db, "users"), where("login", "==", clientName));
+        const querySnapshot = await getDocs(q);
+        let tempObj = {};
+        querySnapshot.forEach((item) => {
+            tempObj = { adres: item.data().adres, number: item.data().phoneNr };
         })
-        setCartData([]);
-        setCartValue(0);
-        setFullPrice(0);
-        sessionStorage.setItem("cartData", JSON.stringify([]));
-        sessionStorage.setItem("cartVal", 0);
+        console.log(tempObj)
+        if (tempObj.adres !== "" && tempObj.number !== "") {
+            await addDoc(collection(db, 'transactions'), {
+                clientName: clientName,
+                date: new Date().toISOString().slice(0, 10),
+                status: false,
+                items: cartData,
+                fullPrice: fullPrice,
+                phoneNr: tempObj.number,
+                adres: tempObj.adres
+            })
+            setCartData([]);
+            setCartValue(0);
+            setFullPrice(0);
+            sessionStorage.setItem("cartData", JSON.stringify([]));
+            sessionStorage.setItem("cartVal", 0);
+            setShowErr(false);
+        }
+        else {
+            setShowErr(true);
+        }
     }
 
     return <>
@@ -109,6 +127,7 @@ const Cart = ({ setData, clientName }) => {
                 })}
             </div>
             <div className='cart-confirm'>
+                {showErr && <p style={{ color: "red" }}>Najpierw wprowadz numer telefonu i adres w zakladce uzytkownika</p>}
                 <form onSubmit={handleSubmit}>
                     <input type="submit" value="Zloz zamowienie" />
                     <p className='fullPrice'>{fullPrice}zl</p>
