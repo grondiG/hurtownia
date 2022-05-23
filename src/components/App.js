@@ -12,6 +12,7 @@ import Main from './Main';
 import General from './General';
 import Product from './Product';
 import UserPanel from './User-Panel';
+import Skup from './Skup'
 
 
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/general" element={<General />} />
           <Route path="/product" element={<Product />} />
+          <Route path="/skup" element={<Skup />} />
           <Route path="/user-panel" element={<UserPanel />} />
         </Routes>
       </div>

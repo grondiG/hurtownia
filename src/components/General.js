@@ -73,6 +73,7 @@ const General = () => {
                     <h1>Menu</h1>
                     <ul>
                         <li onClick={() => { navigate('/general', { state: { login: location.state.login, permissions: permissions } }) }}>Sklep</li>
+                        <li onClick={() => { navigate('/skup', { state: { login: location.state.login, permissions: permissions } }) }}>Skup</li>
                         <li>Zgloś błąd</li>
                         <li onClick={() => { navigate('/user-panel', { state: { login: location.state.login, permissions: permissions } }) }}>Twoje konto ({location.state.login})</li>
                     </ul>
