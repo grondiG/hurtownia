@@ -543,29 +543,21 @@ li:hover::after {
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     transition: all .5s ease-in-out;
     margin: .5rem 0;
 
 }
 
-.offerBtn p {
-    position: relative;
 
-}
-
-.offerBtn p::after {
-    content: "";
-    width: 2px;
-    height: 30px;
-    position: absolute;
-    background-color: black;
-}
 
 .offerBtn:hover {
     cursor: pointer;
     background-color: white;
     transform: scale(1.01);
+}
+.offerBtn table{
+    border-radius: 15px;
 }
 
 .modal {

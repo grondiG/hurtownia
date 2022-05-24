@@ -164,12 +164,17 @@ const UserPanel = () => {
                     <h1>Propozycje transakcji: </h1>
                     <div className="offers">
                         {data.map((item, key) => {
-                            const { clientName, date, fullPrice, items, status, adres, phoneNr } = item;
+                            const { clientName, date, fullPrice, items, status, adres, phoneNr, type } = item;
                             return <div className='offerBtn' onClick={() => handleModal(items, adres, phoneNr)}>
-                                <p>Nazwa klienta: {clientName}</p>
-                                <p>Cena ogólna: {fullPrice}zł</p>
-                                <p>Data: {date}</p>
-                                <p>Stan: {status ? '✅' : '❌'}</p>
+                                <table>
+                                    <tr>
+                                        <td>Nazwa klienta: {clientName}</td>
+                                        <td>Cena ogólna: {fullPrice}zł</td>
+                                        <td>Data: {date}</td>
+                                        <td>Typ: {type}</td>
+                                        <td>Stan: {status ? '✅' : '❌'}</td>
+                                    </tr>
+                                </table>
                             </div>
                         })}
                     </div>

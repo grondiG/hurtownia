@@ -84,7 +84,8 @@ const Cart = ({ setData, clientName }) => {
                 items: cartData,
                 fullPrice: fullPrice,
                 phoneNr: tempObj.number,
-                adres: tempObj.adres
+                adres: tempObj.adres,
+                type: "buy"
             })
             setCartData([]);
             setCartValue(0);
