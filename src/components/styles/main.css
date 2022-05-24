@@ -546,6 +546,20 @@ li:hover::after {
     font-size: 1.1rem;
     transition: all .5s ease-in-out;
     margin: .5rem 0;
+
+}
+
+.offerBtn p {
+    position: relative;
+
+}
+
+.offerBtn p::after {
+    content: "";
+    width: 2px;
+    height: 30px;
+    position: absolute;
+    background-color: black;
 }
 
 .offerBtn:hover {
@@ -603,6 +617,7 @@ table img {
     width: 150px !important;
     height: 150px !important;
 }
-hr{
+
+hr {
     width: 100%;
 }
