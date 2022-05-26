@@ -305,7 +305,7 @@ li:hover::after {
     gap: 5px;
     align-items: center;
     justify-content: center;
-    height: 40vh;
+    min-height: 55vh;
     width: 70%;
     background-color: #ffffff80;
     border-radius: 30px;
@@ -527,7 +527,10 @@ li:hover::after {
 
 .user-panel img {
     position: absolute;
-    left: 20%;
+    left: 5%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
 }
 
 .offers {

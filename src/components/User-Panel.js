@@ -22,6 +22,7 @@ const UserPanel = () => {
     const [userNumber, setUserNumber] = useState('');
     const [data, setData] = useState([]);
     const [clientData, setClientData] = useState([]);
+    const [stan, setStan] = useState();
 
     const info = useRef();
     const infoUpdate = useRef();
@@ -80,7 +81,8 @@ const UserPanel = () => {
         }
     }
 
-    const handleModal = (items, adres, phoneNr, type, id) => {
+    const handleModal = (items, adres, phoneNr, type, id, status) => {
+        setStan(status)
         let typeC = false;
         if (type === 'buy') {
             typeC = true;
@@ -171,7 +173,7 @@ const UserPanel = () => {
                     <div className="offers">
                         {data.map((item, key) => {
                             const { clientName, date, fullPrice, items, status, adres, phoneNr, type, id } = item;
-                            return <div className='offerBtn' onClick={() => handleModal(items, adres, phoneNr, type, id)}>
+                            return <div className='offerBtn' onClick={() => handleModal(items, adres, phoneNr, type, id, status)}>
                                 <table>
                                     <tr>
                                         <td>Nazwa klienta: {clientName}</td>
@@ -187,7 +189,7 @@ const UserPanel = () => {
 
                 </div>
             }
-            <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} clientData={clientData} />
+            <UserModal showModal={showModal} setShowModal={setShowModal} modalData={modalData} clientData={clientData} stan={stan} />
         </div>
     </>
 }

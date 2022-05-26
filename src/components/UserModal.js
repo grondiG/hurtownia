@@ -4,7 +4,7 @@ import app from "./initFirebase";
 
 const db = getFirestore(app);
 
-const UserModal = ({ showModal, setShowModal, modalData, clientData }) => {
+const UserModal = ({ showModal, setShowModal, modalData, clientData, stan }) => {
     const modal = useRef(null);
     const info = useRef();
     useEffect(() => {
@@ -91,16 +91,16 @@ const UserModal = ({ showModal, setShowModal, modalData, clientData }) => {
 
                 </tbody>
             </table>
-            {clientData.type ? <h2>Uzytkownik chce od ciebie kupic podane wyzej przedmioty</h2> : <h2>Uzytkownik chce ci sprzedac podane wyzej przedmioty</h2>}
+            {clientData.type ? (!stan ? <h2>Uzytkownik chce od ciebie kupic podane wyzej przedmioty</h2> : <h2>Uzytkownik kupil od ciebie te produkty</h2>) : (!stan ? <h2>Uzytkownik chce ci sprzedac podane wyzej przedmioty</h2> : <h2>Uzytkownik sprzedal ci ten produkt</h2>)}
             <p>Adres wysylki: {clientData.adres}</p>
             <p>Numer kontaktowy: {clientData.number}</p>
             <p ref={info}></p>
-            <form onSubmit={handleSubmit}>
+            {!stan && <form onSubmit={handleSubmit}>
                 <input type="submit" className="btn" style={{
                     borderColor: 'green',
                     color: 'green',
                 }} value="Zatwierdz" />
-            </form>
+            </form>}
         </div>
     </div >
 }
