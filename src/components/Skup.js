@@ -35,7 +35,7 @@ const Skup = () => {
                     clientName: location.state.login,
                     date: new Date().toISOString().slice(0, 10),
                     status: false,
-                    items: data,
+                    items: [data],
                     fullPrice: data.price,
                     phoneNr: tempObj.number,
                     adres: tempObj.adres,
@@ -75,6 +75,7 @@ const Skup = () => {
         <div className="content">
             <div className='user-panel'>
                 <h1>Skup Spożywczy</h1>
+                <img src={data.img_url} alt="Tutaj pokaze sie twoje zdjecie pogladowe" />
                 <form onSubmit={handleSubmit}>
                     <p>Nazwa produktu: </p>
                     <input type="text" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} />

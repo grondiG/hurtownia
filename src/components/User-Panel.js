@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { doc, setDoc, getDocs, getFirestore, collection, query, where, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, getFirestore, collection, query, where, updateDoc, orderBy } from "firebase/firestore";
 import UserModal from './UserModal';
 import app from './initFirebase';
 
@@ -32,9 +32,11 @@ const UserPanel = () => {
 
     const fetchData = async () => {
         let tempArr = [];
-        const docRef = await getDocs(collection(db, "transactions"));
+        const q = query(collection(db, "transactions"), orderBy("type"))
+        const docRef = await getDocs(q);
+
         docRef.forEach((doc) => {
-            tempArr.push(doc.data());
+            tempArr.push({ ...doc.data(), id: doc.id });
         })
         console.log(tempArr);
         setData(tempArr);
@@ -78,9 +80,13 @@ const UserPanel = () => {
         }
     }
 
-    const handleModal = (items, adres, phoneNr) => {
+    const handleModal = (items, adres, phoneNr, type, id) => {
+        let typeC = false;
+        if (type === 'buy') {
+            typeC = true;
+        }
         setModalData(items);
-        setClientData({ adres: adres, number: phoneNr });
+        setClientData({ adres: adres, number: phoneNr, type: typeC, id: id });
         setShowModal(true);
     }
 
@@ -164,8 +170,8 @@ const UserPanel = () => {
                     <h1>Propozycje transakcji: </h1>
                     <div className="offers">
                         {data.map((item, key) => {
-                            const { clientName, date, fullPrice, items, status, adres, phoneNr, type } = item;
-                            return <div className='offerBtn' onClick={() => handleModal(items, adres, phoneNr)}>
+                            const { clientName, date, fullPrice, items, status, adres, phoneNr, type, id } = item;
+                            return <div className='offerBtn' onClick={() => handleModal(items, adres, phoneNr, type, id)}>
                                 <table>
                                     <tr>
                                         <td>Nazwa klienta: {clientName}</td>

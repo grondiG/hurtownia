@@ -504,8 +504,8 @@ li:hover::after {
 }
 
 .user-panel {
-    width: 50%;
-    min-height: 50vh;
+    width: 70%;
+    min-height: 60vh;
     padding: 2rem;
     background-color: #ffffff80;
     border-radius: 30px;
@@ -523,6 +523,11 @@ li:hover::after {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.user-panel img {
+    position: absolute;
+    left: 20%;
 }
 
 .offers {
@@ -556,7 +561,8 @@ li:hover::after {
     background-color: white;
     transform: scale(1.01);
 }
-.offerBtn table{
+
+.offerBtn table {
     border-radius: 15px;
 }
 
