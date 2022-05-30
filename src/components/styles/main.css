@@ -622,3 +622,12 @@ table img {
 hr {
     width: 100%;
 }
+.users{
+    width:80%;
+    height: 100px;
+    overflow-y: auto;
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

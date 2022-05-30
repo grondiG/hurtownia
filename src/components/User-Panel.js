@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { doc, setDoc, getDocs, getFirestore, collection, query, where, updateDoc, orderBy } from "firebase/firestore";
 import UserModal from './UserModal';
 import app from './initFirebase';
+import { async } from '@firebase/util';
 
 const db = getFirestore(app);
 
@@ -23,12 +24,21 @@ const UserPanel = () => {
     const [data, setData] = useState([]);
     const [clientData, setClientData] = useState([]);
     const [stan, setStan] = useState();
+    const [users, setUsers] = useState([]);
 
     const info = useRef();
     const infoUpdate = useRef();
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    const handlePermissions = async (id) => {
+        const userRef = doc(db, "users", id);
+        await updateDoc(userRef, {
+            permissions: 1
+        })
+        setUsers(users.filter((item) => item.id !== id))
+    }
 
 
     const fetchData = async () => {
@@ -41,6 +51,14 @@ const UserPanel = () => {
         })
         console.log(tempArr);
         setData(tempArr);
+        let usersArr = [];
+        const querySnapshot = query(collection(db, "users"), where("permissions", "==", 0));
+        const usersRef = await (getDocs(querySnapshot))
+        usersRef.forEach((doc) => {
+            usersArr.push({ ...doc.data(), id: doc.id });
+        })
+        console.log(usersArr);
+        setUsers(usersArr);
     }
 
     useEffect(() => {
@@ -166,6 +184,19 @@ const UserPanel = () => {
                     <p ref={info}></p>
                     <input type="submit" value="Dodaj" />
                 </form>
+            </div>}
+            {location.state.permissions > 0 && <div className='user-panel'>
+                <h1>Nadaj uprawnienia uzytkownikom: </h1>
+                <div className='offers'>
+                    {users.map((item) => {
+                        const { login, permissions, id } = item;
+                        return <div className='users'>
+                            <p>Login: {login}</p>
+                            <p>Status permisji: {permissions}</p>
+                            <input type="button" className='btn' value="Daj admina" onClick={(e) => { handlePermissions(id) }} />
+                        </div>
+                    })}
+                </div>
             </div>}
             {
                 location.state.permissions > 1 && <div className="user-panel">

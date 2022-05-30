@@ -1,12 +1,13 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import useNetwork from "./hooks/useOnlineStatus";
 import { GiHamburgerMenu } from 'react-icons/gi'
 import React, { useEffect, useState } from 'react';
 import Cart from './Cart';
 
 const db = getFirestore();
 
-const General = () => {
+const Product = () => {
     const [permissions, setPermissions] = useState(0);
     const [showMenu, setShowMenu] = useState(false);
     const [data, setData] = useState({});
@@ -14,6 +15,7 @@ const General = () => {
     const [cartData, setCartData] = useState([]);
     const [itemAmount, setItemAmount] = useState(1);
     const navigate = useNavigate();
+    const isOnline = useNetwork();
 
     const getData = async () => {
         setData({
@@ -80,10 +82,10 @@ const General = () => {
                 <div className="menu-list">
                     <h1>Menu</h1>
                     <ul>
-                        <li onClick={() => { navigate('/general', { state: { login: location.state.login, permissions: permissions, cartData: cartData, cartVal: cartVal } }) }}>Sklep</li>
-                        <li onClick={() => { navigate('/skup', { state: { login: location.state.login, permissions: permissions } }) }}>Skup</li>
+                        <li onClick={() => { navigate('/general', { state: { login: location.state.login, permissions: permissions, cartData: cartData, cartVal: cartVal, data: location.state.data } }) }}>Sklep</li>
+                        {navigator.onLine && <li onClick={() => { navigate('/skup', { state: { login: location.state.login, permissions: permissions } }) }}>Skup</li>}
                         <li>Zgloś błąd</li>
-                        <li onClick={() => { navigate('/user-panel', { state: { login: location.state.login, permissions: permissions } }) }}>Twoje konto ({location.state.login})</li>
+                        {navigator.onLine && <li onClick={() => { navigate('/user-panel', { state: { login: location.state.login, permissions: permissions } }) }}>Twoje konto ({location.state.login})</li>}
                     </ul>
                 </div>
             </div>
@@ -107,8 +109,8 @@ const General = () => {
                 </div>
             </div>
         </div>
-        <Cart setData={setCartData} data={cartData} clientName={location.state.login} />
+        {navigator.onLine && <Cart setData={setCartData} data={cartData} clientName={location.state.login} />}
     </>
 }
 
-export default General;
+export default Product;
